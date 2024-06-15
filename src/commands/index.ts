@@ -1,5 +1,16 @@
-import ping from "./ping";
+// Useful links:
+// https://discord.js.org/docs/packages/discord.js/14.15.3/Interaction:TypeAlias
+// https://discord.js.org/docs/packages/discord.js/14.15.3/BaseInteraction:Class
 
-const commands = [ping];
+import { Collection } from "discord.js";
+import ping from "./ping";
+import type { Command } from "../commands/types";
+
+const commandsArray: Command[] = [ping];
+
+const commands = new Collection<string, Command>();
+for (const command of commandsArray) {
+	commands.set(command.data.name, command);
+}
 
 export default commands;

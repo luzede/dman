@@ -1,4 +1,4 @@
-import type { Database } from "./types/database";
+import type { Database } from "../database/types";
 import SQLite from "better-sqlite3"; // You can import it as any name, in the docs it is imported as "Database"
 import { Kysely, SqliteDialect } from "kysely";
 
