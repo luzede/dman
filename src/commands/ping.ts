@@ -19,21 +19,5 @@ export default {
 		_db: Kysely<Database>,
 	) {
 		await interaction.reply({ content: "Pong!", ephemeral: true });
-
-		// await db
-		// 	.insertInto("banned")
-		// 	.values({
-		// 		user_id: "123",
-		// 		reason: "Spamming",
-		// 		guild_id: "456",
-		// 		ban_duration_minutes: 60,
-		// 	})
-		// 	.execute();
-
-		// const banned = await db.selectFrom("banned").selectAll().execute();
-		// console.log(banned);
-
-		// const res = await sql`SELECT 5 as five`.execute(db);
-		// console.log(res);
 	},
 };
