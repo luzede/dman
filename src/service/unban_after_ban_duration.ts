@@ -8,6 +8,8 @@ import type { Client } from "discord.js/typings";
 import type { Database } from "../database/types";
 import { SqliteError } from "better-sqlite3";
 
+const DEBUG_MODE = process.env?.DEBUG_MODE;
+
 export async function unbanAfterBanEnds(client: Client, db: Kysely<Database>) {
 	const date_now = new Date().toISOString().replace("T", " ").slice(0, 19);
 	const date_yesterday = new Date(Date.now() - 86400000)
@@ -42,41 +44,45 @@ export async function unbanAfterBanEnds(client: Client, db: Kysely<Database>) {
 			const unbannedUser = await guild.bans
 				.remove(user_id, "Ban expired")
 				.catch((_error) => {
-					// console.log(
-					// 	"Error while unbanning the user.\nThe user might have been unbanned manually, automatically or no longer exists.",
-					// );
-					// console.error(_error);
+					if (DEBUG_MODE) {
+						console.log(
+							`Error while unbanning the user with ID: ${user_id}.\nThe user might have been unbanned manually, automatically or no longer exists.`,
+						);
+						// console.error(_error);
+					}
 					return null;
 				});
 
-			if (unbannedUser)
+			if (unbannedUser && DEBUG_MODE)
 				console.log(`User ${unbannedUser.tag} has been unbanned successfully.`);
 		}
 	} catch (error) {
-		console.error("--------------------------------------------");
-		console.error(
-			"Error while unbanning the user in 'src/service/unban_after_ban_duration.ts'",
-		);
-		if (error instanceof SqliteError) console.error(error.code);
-		else if (error instanceof DiscordAPIError)
+		if (DEBUG_MODE) {
+			console.error("--------------------------------------------");
 			console.error(
-				error.code,
-				"\n",
-				error.message,
-				"\n",
-				error.cause,
-				"\n",
-				error.stack,
+				"Error while unbanning the user in 'src/service/unban_after_ban_duration.ts'",
 			);
-		else
-			console.error(
-				"Unknown error in 'src/service/unban_after_ban_duration.ts'\n",
-				error,
-			);
-		console.error("--------------------------------------------");
+			if (error instanceof SqliteError) console.error(error.code);
+			else if (error instanceof DiscordAPIError)
+				console.error(
+					error.code,
+					"\n",
+					error.message,
+					"\n",
+					error.cause,
+					"\n",
+					error.stack,
+				);
+			else
+				console.error(
+					"Unknown error in 'src/service/unban_after_ban_duration.ts'\n",
+					error,
+				);
+			console.error("--------------------------------------------");
+		}
 	}
 
 	// Run the function every 10 minutes
 	// 1 hour = 3600000 ms
-	setTimeout(unbanAfterBanEnds, 1000 * 30, client, db);
+	setTimeout(unbanAfterBanEnds, 3600000, client, db);
 }

@@ -4,6 +4,8 @@ import { DiscordAPIError } from "discord.js";
 import type { Database } from "../database/types";
 import type { Kysely } from "kysely";
 
+const DEBUG_MODE = process.env?.DEBUG_MODE;
+
 export async function recordsCleanup(db: Kysely<Database>) {
 	// subtract a year from the current date
 	const date_year_before = new Date(Date.now() - 31536000000)
@@ -14,6 +16,7 @@ export async function recordsCleanup(db: Kysely<Database>) {
 		db,
 		date_year_before,
 	).catch((err) => {
+		if (!DEBUG_MODE) return undefined;
 		console.error("--------------------------------------------");
 		console.log(
 			"Error while deleting records from table 'muted' in 'src/service/records_cleanup.ts'",
@@ -35,11 +38,11 @@ export async function recordsCleanup(db: Kysely<Database>) {
 		return undefined;
 	});
 
-	if (response) {
+	if (response && DEBUG_MODE) {
 		console.log(
 			`Deleted ${response[0].numDeletedRows} records from table 'muted'`,
 		);
 	}
 
-	setTimeout(recordsCleanup, 1000 * 60, db);
+	setTimeout(recordsCleanup, 86400000, db);
 }

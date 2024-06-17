@@ -16,6 +16,8 @@ import {
 	createBanMessageEmbed,
 } from "./embeds/ban";
 
+const DEBUG_MODE = process.env?.DEBUG_MODE;
+
 export default {
 	data: new SlashCommandBuilder()
 		.setName("ban")
@@ -186,10 +188,25 @@ export default {
 					],
 				})
 				.catch((_error) => {
-					console.log(
-						"Error while sending message to the user",
-						target_member.user.tag,
-					);
+					if (DEBUG_MODE) {
+						console.log("--------------------------------------------");
+						console.log(
+							"Error while sending message to the user",
+							target_member.user.tag,
+						);
+						if (_error instanceof DiscordAPIError) {
+							console.error(
+								_error.code,
+								"\n",
+								_error.message,
+								"\n",
+								_error.cause,
+								"\n",
+								_error.stack,
+							);
+						} else console.error("Unknown error in commands/ban.ts\n", _error);
+						console.log("--------------------------------------------");
+					}
 					// console.error(error);
 				});
 
@@ -211,21 +228,23 @@ export default {
 				],
 			});
 		} catch (error) {
-			console.error("--------------------------------------------");
-			console.error("Error while banning the user in commands/ban.ts");
-			if (error instanceof SqliteError) console.error(error.code);
-			else if (error instanceof DiscordAPIError)
-				console.error(
-					error.code,
-					"\n",
-					error.message,
-					"\n",
-					error.cause,
-					"\n",
-					error.stack,
-				);
-			else console.error("Unknown error in commands/ban.ts\n", error);
-			console.error("--------------------------------------------");
+			if (DEBUG_MODE) {
+				console.error("--------------------------------------------");
+				console.error("Error while banning the user in commands/ban.ts");
+				if (error instanceof SqliteError) console.error(error.code);
+				else if (error instanceof DiscordAPIError)
+					console.error(
+						error.code,
+						"\n",
+						error.message,
+						"\n",
+						error.cause,
+						"\n",
+						error.stack,
+					);
+				else console.error("Unknown error in commands/ban.ts\n", error);
+				console.error("--------------------------------------------");
+			}
 			await interaction.deleteReply();
 			await interaction.followUp({
 				content: "There was an error while banning the user.",
