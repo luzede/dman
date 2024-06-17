@@ -7,7 +7,11 @@ import { Kysely, SqliteDialect } from "kysely";
 
 const dialect = new SqliteDialect({
 	database: new SQLite("src/database/main.db", {
-		timeout: 50,
+		// better-sqlite3 is by design synchronous so it locks down the thread when it waits for a response
+		// which is why the wait time should be kept low, much lower than 3 seconds so that subsequent event handlers are not blocked
+		// and are able to deferReply to the interaction
+		// 100ms is a good value for the timeout
+		timeout: 100,
 	}),
 });
 

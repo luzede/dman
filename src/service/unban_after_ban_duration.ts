@@ -2,6 +2,7 @@ import {
 	deleteBannedRecordsByBanEndsAtUntil,
 	getBannedRecordsByBanEndsAtUntil,
 } from "../database/queries/banned";
+import { DiscordAPIError } from "discord.js";
 import type { Kysely } from "kysely";
 import type { Client } from "discord.js/typings";
 import type { Database } from "../database/types";
@@ -38,13 +39,18 @@ export async function unbanAfterBanEnds(client: Client, db: Kysely<Database>) {
 			}
 
 			// Returns "User" or "null", or void if the catch statement does not return null;
-			await guild.bans.remove(user_id).catch((_error) => {
-				console.log(
-					"Error while unbanning the user.\nThe user might have been unbanned manually, automatically or no longer exists.",
-				);
-				// console.error(_error);
-				// return null;
-			});
+			const unbannedUser = await guild.bans
+				.remove(user_id, "Ban expired")
+				.catch((_error) => {
+					// console.log(
+					// 	"Error while unbanning the user.\nThe user might have been unbanned manually, automatically or no longer exists.",
+					// );
+					// console.error(_error);
+					return null;
+				});
+
+			if (unbannedUser)
+				console.log(`User ${unbannedUser.tag} has been unbanned successfully.`);
 		}
 	} catch (error) {
 		console.error("--------------------------------------------");
@@ -52,6 +58,16 @@ export async function unbanAfterBanEnds(client: Client, db: Kysely<Database>) {
 			"Error while unbanning the user in 'src/service/unban_after_ban_duration.ts'",
 		);
 		if (error instanceof SqliteError) console.error(error.code);
+		else if (error instanceof DiscordAPIError)
+			console.error(
+				error.code,
+				"\n",
+				error.message,
+				"\n",
+				error.cause,
+				"\n",
+				error.stack,
+			);
 		else
 			console.error(
 				"Unknown error in 'src/service/unban_after_ban_duration.ts'\n",

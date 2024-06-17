@@ -4,7 +4,6 @@ import type { Event } from "../events/types";
 import type { Command } from "../commands/types";
 import type { Database } from "../database/types/database";
 import type { Kysely } from "kysely";
-import { sleep } from "../utils";
 
 const interactionCreate: Event = {
 	name: Events.InteractionCreate,
@@ -28,7 +27,6 @@ const interactionCreate: Event = {
 			}
 
 			try {
-				await interaction.deferReply({ ephemeral: false });
 				await command.execute(interaction, db);
 			} catch (error) {
 				console.error(error);

@@ -1,5 +1,6 @@
 import { SqliteError } from "better-sqlite3";
 import { deleteMutedRecordsByCreatedAtUntil } from "../database/queries/muted";
+import { DiscordAPIError } from "discord.js";
 import type { Database } from "../database/types";
 import type { Kysely } from "kysely";
 
@@ -18,6 +19,16 @@ export async function recordsCleanup(db: Kysely<Database>) {
 			"Error while deleting records from table 'muted' in 'src/service/records_cleanup.ts'",
 		);
 		if (err instanceof SqliteError) console.error(err.code);
+		else if (err instanceof DiscordAPIError)
+			console.error(
+				err.code,
+				"\n",
+				err.message,
+				"\n",
+				err.cause,
+				"\n",
+				err.stack,
+			);
 		else
 			console.error("Unknown error in 'src/service/records_cleanup.ts'\n", err);
 		console.error("--------------------------------------------");

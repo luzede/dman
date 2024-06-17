@@ -15,7 +15,6 @@ import {
 	createBanGuildMessageEmbed,
 	createBanMessageEmbed,
 } from "./embeds/ban";
-import { sleep } from "../utils";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -53,12 +52,11 @@ export default {
 		interaction: ChatInputCommandInteraction,
 		db: Kysely<Database>,
 	) {
+		// Checks if the interaction is in a guild
+		// and if app is in the guild while there are registered commands
+		// pointing to this app.
 		if (!interaction.inCachedGuild()) {
-			// Checks if the interaction is in a guild
-			// and if app is in the guild while there are registered commands
-			// pointing to this app.
-			await interaction.deleteReply();
-			await interaction.followUp({
+			await interaction.reply({
 				content:
 					"This command is only available in guilds with the app in the guild.",
 				ephemeral: true,
@@ -74,8 +72,7 @@ export default {
 				["admin", "moderator"].includes(role.name),
 			)
 		) {
-			await interaction.deleteReply();
-			await interaction.followUp({
+			await interaction.reply({
 				content: "You do not have the required role to use this command.",
 				ephemeral: true,
 			});
@@ -85,6 +82,15 @@ export default {
 		// Get the user to ban
 		// The true parameter tells the function that the user is a required option thus it cannot be null
 		const target = interaction.options.getUser("user", true);
+
+		// Check if the target user is the bot that is running the command
+		if (target.id === interaction.client.user.id) {
+			await interaction.reply({
+				content: "The bot cannot ban itself.",
+				ephemeral: true,
+			});
+			return;
+		}
 
 		// Fetch the member object of the user from the guild
 		// which will have the methods to ban the user
@@ -98,8 +104,7 @@ export default {
 			target_member.user.bot === true &&
 			banner_member.id !== interaction.guild.ownerId
 		) {
-			await interaction.deleteReply();
-			await interaction.followUp({
+			await interaction.reply({
 				content: "You cannot ban a bot.",
 				ephemeral: true,
 			});
@@ -108,7 +113,7 @@ export default {
 
 		// Check if the target user is the owner of the guild
 		if (target_member.id === interaction.guild.ownerId) {
-			await interaction.editReply({
+			await interaction.reply({
 				content: "You cannot ban the owner of the guild.",
 			});
 			return;
@@ -123,8 +128,7 @@ export default {
 			targetRolePosition >= bannerRolePosition &&
 			banner_member.id !== interaction.guild.ownerId
 		) {
-			await interaction.deleteReply();
-			await interaction.followUp({
+			await interaction.reply({
 				content: "You cannot ban a user with a higher or equal role than you.",
 				ephemeral: true,
 			});
@@ -134,34 +138,8 @@ export default {
 		const duration = interaction.options.getInteger("duration", true);
 		const reason = interaction.options.getString("reason", true);
 
-		// // Defer the reply to show the loading state
-		// const res = await interaction
-		// 	.deferReply({ ephemeral: false })
-		// 	.catch((error) => {
-		// 		console.error("--------------------------------------------");
-		// 		console.error("Error while deferring the reply in commands/ban.ts");
-		// 		if (error instanceof DiscordAPIError)
-		// 			console.error(
-		// 				error.code,
-		// 				"\n",
-		// 				error.message,
-		// 				"\n",
-		// 				error.cause,
-		// 				"\n",
-		// 				error.stack,
-		// 			);
-		// 		else console.error("Unknown error in commands/ban.ts\n", error);
-		// 		console.error("--------------------------------------------");
-		// 		return undefined;
-		// 	});
-
-		// if (res === undefined) {
-		// 	await interaction.reply({
-		// 		content: "There was an error while deferring the reply.",
-		// 		ephemeral: true,
-		// 	});
-		// 	return;
-		// }
+		// Defer the reply to show the loading state
+		await interaction.deferReply({ ephemeral: false });
 
 		try {
 			// Check if the banner is not the owner of the guild
@@ -174,10 +152,8 @@ export default {
 				);
 
 				if (bansInLast24Hours >= 3) {
-					await interaction.deleteReply();
-					await interaction.followUp({
+					await interaction.editReply({
 						content: "You have reached the limit of bans",
-						ephemeral: true,
 					});
 					return;
 				}
@@ -217,12 +193,12 @@ export default {
 					// console.error(error);
 				});
 
-			// // Banning the user
-			// await target_member.ban({
-			// 	reason: reason,
-			// 	// 5 hours in seconds
-			// 	deleteMessageSeconds: 18000,
-			// });
+			// Banning the user
+			await target_member.ban({
+				reason: reason,
+				// 5 hours in seconds
+				deleteMessageSeconds: 18000,
+			});
 
 			await interaction.editReply({
 				embeds: [
