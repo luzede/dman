@@ -10,6 +10,7 @@ export interface BannedTable {
 	id: Generated<number>;
 	user_id: string;
 	guild_id: string;
+	banner_id: string;
 	reason: string;
 	created_at: ColumnType<string, undefined, never>;
 	ban_ends_at: ColumnType<string, undefined, never>;

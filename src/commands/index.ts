@@ -4,9 +4,10 @@
 
 import { Collection } from "discord.js";
 import ping from "./ping";
+import ban from "./ban";
 import type { Command } from "../commands/types";
 
-const commandsArray: Command[] = [ping];
+const commandsArray: Command[] = [ping, ban];
 
 const commands = new Collection<string, Command>();
 for (const command of commandsArray) {

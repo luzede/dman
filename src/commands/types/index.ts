@@ -1,16 +1,14 @@
 import type {
 	SlashCommandBuilder,
 	Interaction,
-	Collection,
+	SlashCommandOptionsOnlyBuilder,
+	SlashCommandSubcommandBuilder,
+	SlashCommandMentionableOption,
 } from "discord.js/typings";
 import type { Kysely } from "kysely";
 import type { Database } from "../../database/types/database";
 
 export interface Command {
-	data: SlashCommandBuilder;
-	execute(
-		interaction: Interaction,
-		commands?: Collection<string, Command>,
-		db?: Kysely<Database>,
-	): Promise<void>;
+	data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
+	execute(interaction: Interaction, db?: Kysely<Database>): Promise<void>;
 }

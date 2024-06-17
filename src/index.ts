@@ -2,6 +2,9 @@ import config from "./config";
 import commands from "./commands";
 import events from "./events";
 import db from "./database";
+import { unbanAfterBanEnds } from "./service/unban_after_ban_duration";
+import { recordsCleanup } from "./service/records_cleanup";
+import { sleep } from "./utils";
 
 import { Client, GatewayIntentBits } from "discord.js";
 
@@ -30,3 +33,17 @@ for (const event of events) {
 }
 
 client.login(config.TOKEN);
+
+// (async () => {
+// 	// Make sure the client is logged in before using it elsewhere
+
+// 	// Wait for the client to be ready before running the rest of the code
+// 	// For some reason even though we await the client.login() function
+// 	// the clientReady event is not fired immediately but after the
+// 	// 'unbanAfterBanEnds' and 'recordsCleanup' functions throw an error or run successfully
+// 	// Using 'sleep' function however guarantees that the clientReady event is fired
+// 	// before the 'unbanAfterBanEnds' and 'recordsCleanup' functions
+// 	await sleep(1000);
+// 	unbanAfterBanEnds(client, db);
+// 	recordsCleanup(db);
+// })();

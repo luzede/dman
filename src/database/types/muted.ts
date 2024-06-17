@@ -10,6 +10,7 @@ export interface MutedTable {
 	id: Generated<number>;
 	user_id: string;
 	guild_id: string;
+	muter_id: string;
 	reason: string;
 	created_at: ColumnType<string, undefined, never>; // never in the UpdateType means it cannot be updated
 	mute_ends_at: ColumnType<string, undefined, never>;

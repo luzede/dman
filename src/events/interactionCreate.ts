@@ -4,6 +4,7 @@ import type { Event } from "../events/types";
 import type { Command } from "../commands/types";
 import type { Database } from "../database/types/database";
 import type { Kysely } from "kysely";
+import { sleep } from "../utils";
 
 const interactionCreate: Event = {
 	name: Events.InteractionCreate,
@@ -27,13 +28,13 @@ const interactionCreate: Event = {
 			}
 
 			try {
-				await command.execute(interaction, commands, db);
+				await interaction.deferReply({ ephemeral: false });
+				await command.execute(interaction, db);
 			} catch (error) {
 				console.error(error);
 				if (interaction.replied || interaction.deferred) {
 					await interaction.followUp({
 						content: "There was an error while executing this command!",
-						ephemeral: true,
 					});
 				} else {
 					await interaction.reply({

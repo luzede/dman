@@ -6,7 +6,9 @@ import { Kysely, SqliteDialect } from "kysely";
 // and since the folder name is already database, it is easier to read and understand what is being imported
 
 const dialect = new SqliteDialect({
-	database: new SQLite("src/database/main.db"),
+	database: new SQLite("src/database/main.db", {
+		timeout: 50,
+	}),
 });
 
 const db = new Kysely<Database>({
