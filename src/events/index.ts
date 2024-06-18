@@ -4,5 +4,7 @@
 
 import ClientReadyEvent from "./clientReady";
 import InteractionCreateEvent from "./interactionCreate";
+import WebhooksUpdate from "./webhooksUpdate"
+import MessageCreate from "./messageCreate"
 
-export default [ClientReadyEvent, InteractionCreateEvent];
+export default [ClientReadyEvent, InteractionCreateEvent, WebhooksUpdate, MessageCreate];

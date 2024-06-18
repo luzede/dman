@@ -8,13 +8,13 @@ import {
 } from "../database/queries/banned";
 import { SqliteError } from "better-sqlite3";
 import { DiscordAPIError } from "discord.js";
-import type { ChatInputCommandInteraction } from "discord.js/typings";
-import type { Kysely } from "kysely";
-import type { Database } from "../database/types/database";
 import {
 	createBanGuildMessageEmbed,
 	createBanMessageEmbed,
 } from "./embeds/ban";
+import type { ChatInputCommandInteraction } from "discord.js/typings";
+import type { Kysely } from "kysely";
+import type { Database } from "../database/types/database";
 
 const DEBUG_MODE = process.env?.DEBUG_MODE;
 

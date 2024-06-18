@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "npx tsx watch src/index.ts",
 		"deploy_commands": "npx tsx src/deploy_commands.ts",
+		"server_setup": "npx tsx src/server_setup.ts",
 		"migrate": "npx tsx src/database/migrate.ts",
 		"migrate:down": "npx tsx src/database/migrate.ts down",
 		"migrate:up": "npx tsx src/database/migrate.ts up",
