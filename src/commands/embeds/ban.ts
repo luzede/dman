@@ -7,34 +7,34 @@ export function createBanMessageEmbed(
 	duration: number,
 	reason: string,
 ) {
+	let human_readable_duration: string;
+	if (duration === 1) {
+		human_readable_duration = "a minute";
+	} else if (duration === 60) {
+		human_readable_duration = "an hour";
+	} else if (duration === 1440) {
+		human_readable_duration = "a day";
+	} else if (duration === 10080) {
+		human_readable_duration = "a week";
+	} else if (duration === 43200) {
+		human_readable_duration = "a month";
+	} else {
+		human_readable_duration = "a year";
+	}
+
 	const embed = new EmbedBuilder()
 		.setColor("#ff0000")
 		.setAuthor({ name: banner.displayName, iconURL: banner.displayAvatarURL() })
 		.setTitle(`Banned from ${guild_name}`)
 		.setDescription(
-			`You have been banned and are forbidden from rejoining ${guild_name} for a certain amount of time.`,
+			`You have been banned and are forbidden from rejoining ${guild_name} for **${human_readable_duration}**.`,
 		);
 
-	let human_readable_duration: string;
-	if (duration === 1) {
-		human_readable_duration = "minute";
-	} else if (duration === 60) {
-		human_readable_duration = "hour";
-	} else if (duration === 1440) {
-		human_readable_duration = "day";
-	} else if (duration === 10080) {
-		human_readable_duration = "week";
-	} else if (duration === 43200) {
-		human_readable_duration = "month";
-	} else {
-		human_readable_duration = "year";
-	}
-
 	embed
-		.addFields({
-			name: "Duration:",
-			value: human_readable_duration,
-		})
+		// .addFields({
+		// 	name: "Duration:",
+		// 	value: human_readable_duration,
+		// })
 		.addFields({
 			name: "Reason:",
 			value: reason,

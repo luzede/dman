@@ -8,9 +8,10 @@ const DEBUG_MODE = process.env?.DEBUG_MODE;
 
 export async function recordsCleanup(db: Kysely<Database>) {
 	// subtract a year from the current date
-	const date_year_before = new Date(Date.now() - 31536000000)
+	const date_year_before = new Date(Date.now()- 31536000000)
 		.toISOString()
-		.slice(0, 10);
+		.replace("T", " ")
+		.slice(0, 19);
 
 	const response = await deleteMutedRecordsByCreatedAtUntil(
 		db,
