@@ -24,6 +24,7 @@
 		"@biomejs/biome": "1.8.1",
 		"@types/better-sqlite3": "^7.6.10",
 		"@types/node": "^20.14.2",
+		"tsup": "^8.1.0",
 		"tsx": "^4.15.4",
 		"typescript": "^5.4.5"
 	},
@@ -32,5 +33,11 @@
 		"discord.js": "^14.15.3",
 		"dotenv": "^16.4.5",
 		"kysely": "^0.27.3"
-	}
+	},
+	"tsup": {
+    "entry": ["src/index.ts"],
+    "splitting": false,
+    "sourcemap": true,
+    "clean": true
+  }
 }

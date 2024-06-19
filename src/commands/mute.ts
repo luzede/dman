@@ -96,7 +96,7 @@ export default {
       return;
     }
 
-    if (!target.roles.cache.some((role) => ["admin", "moderator"].includes(role.name))) {
+    if (target.roles.cache.some((role) => ["admin", "moderator"].includes(role.name))) {
       await interaction.editReply({
         content: "You cannot mute a user with the admin or moderator role.",
       })
