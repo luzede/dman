@@ -10,10 +10,6 @@ const messageCreate: Event = {
       return;
       }
     console.log(message.content, message.channel.name);
-
-    // biome-ignore lint/complexity/noForEach: <explanation>
-    message.guild?.roles.cache.forEach((role) => console.log(role.position, role.name, role.permissions))
-    console.log(new PermissionsBitField(699746926185793n).bitfield);
     
 	},
 };

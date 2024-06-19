@@ -7,4 +7,4 @@ import InteractionCreateEvent from "./interactionCreate";
 import WebhooksUpdate from "./webhooksUpdate"
 import MessageCreate from "./messageCreate"
 
-export default [ClientReadyEvent, InteractionCreateEvent, WebhooksUpdate, MessageCreate];
+export default [ClientReadyEvent, InteractionCreateEvent];

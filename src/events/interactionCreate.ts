@@ -48,15 +48,10 @@ const interactionCreate: Event = {
 						`Error while executing command "${interaction.commandName}"`,
 					);
 					if (error instanceof DiscordAPIError) {
-						console.error(
-							error.code,
-							"\n",
-							error.message,
-							"\n",
-							error.cause,
-							"\n",
-							error.stack,
-						);
+						console.error(error.code);
+						console.error(error.message);
+						console.error(error.cause);
+						console.error(error.stack);
 					} else
 						console.error(
 							"Unknown error in 'src/events/interactionCreate.ts'\n",

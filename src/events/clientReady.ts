@@ -25,11 +25,16 @@ const clientReady: Event = {
 					name: "admin",
 					color: "Purple",
 					permissions: 699746926185793n,
+					// Display role members separately from online members
+					hoist: true,
 				});
 			}
 			else {
 				if (adminRole.permissions.bitfield !== 699746926185793n) {
 					await adminRole.setPermissions(699746926185793n);
+				}
+				if (adminRole.hoist === false) {
+					await adminRole.setHoist(true);
 				}
 			}
 
@@ -41,6 +46,8 @@ const clientReady: Event = {
 					color: "Yellow",
 					permissions: 119196196785473n,
 					position: adminRole.position,
+					// Display role members separately from online members
+					hoist: true,
 				});
 			}
 			else {
@@ -50,25 +57,27 @@ const clientReady: Event = {
 				if (modRole.position > adminRole.position) {
 					await modRole.setPosition(adminRole.position);
 				}
+				if (modRole.hoist === false) {
+					await modRole.setHoist(true);
+				}
 			}
 		}
 		catch (error) {
-			console.error("--------------------------------------------");
-			console.error("Error in clientReady event");
-			if (error instanceof DiscordAPIError) {
-				console.error(
-						error.code,
-						"\n",
-						error.message,
-						"\n",
-						error.cause,
-						"\n",
-				);
+			if (DEBUG_MODE) { 
+				console.error("--------------------------------------------");
+				console.error("Error in clientReady event");
+				if (error instanceof DiscordAPIError) {
+					console.error(error.code);
+					console.error(error.message);
+					console.error(error.cause);
+					console.error(error.stack);
+				}
+				else {
+					console.error("Unknown error in clientReady event\n", error);
+				}
+				console.error("--------------------------------------------");
 			}
-			else {
-				console.error("Unknown error in clientReady event\n", error);
-			}
-			console.error("--------------------------------------------");
+
 		}
 	},
 };

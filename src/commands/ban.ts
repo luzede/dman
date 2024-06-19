@@ -232,17 +232,12 @@ export default {
 				console.error("--------------------------------------------");
 				console.error("Error while banning the user in commands/ban.ts");
 				if (error instanceof SqliteError) console.error(error.code);
-				else if (error instanceof DiscordAPIError)
-					console.error(
-						error.code,
-						"\n",
-						error.message,
-						"\n",
-						error.cause,
-						"\n",
-						error.stack,
-					);
-				else console.error("Unknown error in commands/ban.ts\n", error);
+				else if (error instanceof DiscordAPIError) {
+					console.error(error.code);
+					console.error(error.message);
+					console.error(error.cause);
+					console.error(error.stack);
+				} else console.error("Unknown error in commands/ban.ts\n", error);
 				console.error("--------------------------------------------");
 			}
 			await interaction.deleteReply();
