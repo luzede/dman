@@ -6,7 +6,7 @@ import { Kysely, SqliteDialect } from "kysely";
 // and since the folder name is already database, it is easier to read and understand what is being imported
 
 const dialect = new SqliteDialect({
-	database: new SQLite("src/database/main.db", {
+	database: new SQLite("main.db", {
 		// better-sqlite3 is by design synchronous so it locks down the thread when it waits for a response
 		// which is why the wait time should be kept low, much lower than 3 seconds so that subsequent event handlers are not blocked
 		// and are able to deferReply to the interaction

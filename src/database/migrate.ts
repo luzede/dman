@@ -17,7 +17,7 @@ process.argv.forEach((val, index) => {
 (async () => {
 	const db = new Kysely({
 		dialect: new SqliteDialect({
-			database: new SQLite(path.join(__dirname, "main.db")),
+			database: new SQLite("main.db"),
 		}),
 	});
 
