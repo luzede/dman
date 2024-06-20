@@ -1,9 +1,9 @@
 // Useful links:
 // https://discord.js.org/docs/packages/discord.js/14.15.3/GuildMember:Class
 
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, AuditLogEvent } from "discord.js";
 import {
-	banCountByBannerLast24Hours,
+	// banCountByBannerLast24Hours,
 	insertNewBanRecord,
 } from "../database/queries/banned";
 import { SqliteError } from "better-sqlite3";
@@ -12,7 +12,7 @@ import {
 	createBanGuildMessageEmbed,
 	createBanMessageEmbed,
 } from "./embeds/ban";
-import type { ChatInputCommandInteraction } from "discord.js/typings";
+import type { ChatInputCommandInteraction} from "discord.js/typings";
 import type { Kysely } from "kysely";
 import type { Database } from "../database/types/database";
 
@@ -148,10 +148,22 @@ export default {
 			// The owner of the guild does not have a limit on the number of bans they can make
 			if (banner_member.id !== interaction.guild.ownerId) {
 				// The number of people that got banned in the last 24 hours
-				const [{ bansInLast24Hours }] = await banCountByBannerLast24Hours(
-					db,
-					banner_member.id,
-				);
+				// const [{ bansInLast24Hours }] = await banCountByBannerLast24Hours(
+				// 	db,
+				// 	banner_member.id,
+				// );
+
+				const memberBanAuditLogs = await interaction.guild.fetchAuditLogs({ type: AuditLogEvent.MemberBanAdd, limit: 100 })
+				const day_before = new Date(Date.now() - 86400000)
+				const bansInLast24Hours = memberBanAuditLogs.entries.filter(
+					(entry) => entry.createdAt > day_before && entry.reason?.slice(0,19) === banner_member.id
+				).reduce((acc, _val) => acc + 1, 0)
+
+				if (DEBUG_MODE) {
+					console.log("--------------------------------------------");
+					console.log(`Bans in last 24 hours by ${banner_member.user.username}: ${bansInLast24Hours}`);
+					console.log("--------------------------------------------");
+				}
 
 				if (bansInLast24Hours >= 3) {
 					await interaction.editReply({
@@ -212,10 +224,11 @@ export default {
 
 			// Banning the user
 			await target_member.ban({
-				reason: reason,
+				reason: `${banner_member.id}:${reason}`,
 				// 5 hours in seconds
 				deleteMessageSeconds: 18000,
 			});
+
 
 			await interaction.editReply({
 				embeds: [
